@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>제주&amp;하타라시 · 아이와 함께 갈 오름 찾기</title>
+  <meta name="description" content="아이와 함께 제주를 여행하는 가족에게, 경사·주차·왕복 소요시간 조건에 맞는 오름을 골라 주는 친절한 에이전트">
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+
+  <!-- 공유 미리보기 (이름·한 줄 약속은 brand.md 기준) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="제주&amp;하타라시">
+  <meta property="og:description" content="아이와 함께 제주를 여행하는 가족에게, 경사·주차·왕복 소요시간 조건에 맞는 오름을 골라 주는 친절한 에이전트">
+  <!-- 배포 주소가 생기면 아래 두 줄의 주석을 풀고 주소를 채워요. og:image 는 절대 주소(https://…)여야 하고, 1200x630 권장이에요.
+  <meta property="og:url" content="https://배포주소/">
+  <meta property="og:image" content="https://배포주소/images/og.png">
+  -->
+
+  <!-- 홈 화면에 추가 (Chrome·Safari) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B6E8A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="제주&amp;하타라시">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <style>
+    /* 이름·약속·색·글꼴·로고는 brand.md 기준 */
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+    :root {
+      --main: #0B6E8A;
+      --point: #F2994A;
+      --bg: #F3FAFC;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #000;
+      font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    /* 휴대폰 너비 기준 */
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 20px 16px 28px;
+    }
+
+    /* ① 히어로 */
+    .hero {
+      background: var(--main);
+      color: #fff;
+      border-radius: 4px;
+      padding: 32px 20px 24px;
+      text-align: center;
+    }
+    .logo-link {
+      display: block;
+      width: 88px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+    }
+    .logo-link:focus-visible { outline: 3px solid var(--point); outline-offset: 3px; }
+    .logo {
+      display: block;
+      width: 88px;
+      height: 88px;
+      padding: 8px;
+      background: var(--bg);
+      border-radius: 50%;
+    }
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .promise {
+      margin: 0 0 24px;
+      font-size: 16px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 56px;
+      border-radius: 4px;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn:focus-visible { outline: 3px solid var(--point); outline-offset: 2px; }
+    /* 파란 면 위: 감귤빛 + 검은 글자 */
+    .btn-point { background: var(--point); color: #000; }
+    .btn-point:focus-visible { outline-color: #fff; }
+    /* 밝은 배경 위: 바다빛 + 흰 글자 */
+    .btn-main { background: var(--main); color: #fff; }
+
+    section { margin-top: 36px; }
+
+    h2 {
+      margin: 0 0 12px 4px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--main);
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .card {
+      background: #fff;
+      border: 1.5px solid var(--main);
+      border-top: 4px solid var(--point);
+      border-radius: 4px;
+      padding: 14px 16px 16px;
+    }
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--main);
+    }
+    .card p { margin: 0; font-size: 15px; }
+    .card .ex {
+      margin-top: 8px;
+      padding-left: 10px;
+      border-left: 3px solid var(--point);
+      font-size: 14px;
+    }
+
+    /* ③ 사용법 */
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .num {
+      flex: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--point);
+      color: #000;
+      font-weight: 700;
+      line-height: 32px;
+      text-align: center;
+    }
+    .step h3 { margin-top: 3px; }
+
+    /* ④ 마무리 */
+    .closing { margin-top: 36px; }
+    .note {
+      margin: 12px 0 0;
+      text-align: center;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <!-- ① 히어로 -->
+    <header class="hero">
+      <a class="logo-link" href="index.html"><img class="logo" src="images/logo.svg" alt="제주&amp;하타라시 홈으로"></a>
+      <h1>제주&amp;하타라시</h1>
+      <p class="promise">아이와 함께 제주를 여행하는 가족에게, 경사·주차·왕복 소요시간 조건에 맞는 오름을 골라 주는 친절한 에이전트</p>
+      <a class="btn btn-point" href="agent.html">지금 물어보기</a>
+    </header>
+
+    <!-- ② 할 수 있는 일 -->
+    <section class="can">
+      <h2>할 수 있는 일</h2>
+      <ul class="list">
+        <li class="card">
+          <h3>조건에 맞는 오름 고르기</h3>
+          <p>경사, 주차, 왕복 소요시간을 기준으로 아이와 함께라면 무리 없는 코스를 골라 드려요.</p>
+          <p class="ex">“경사가 완만하고 주차가 쉬우며 왕복 1시간 내외인 오름은 어디인가요?”</p>
+        </li>
+        <li class="card">
+          <h3>비 온 뒤에도 갈 만한 곳 찾기</h3>
+          <p>날씨와 숙소에서 가는 시간, 화장실 같은 편의 조건을 함께 살펴봐요.</p>
+          <p class="ex">“오늘 비가 온 뒤라 길이 미끄러울 수 있는데, 지금 숙소에서 30분 안에 갈 수 있고 화장실이 있는 오름은 어디인가요?”</p>
+        </li>
+        <li class="card">
+          <h3>어린 아이와 걷기 좋은 곳 찾기</h3>
+          <p>아이 나이와 유모차 사용 여부에 맞춰 가볍게 다녀올 수 있는 오름을 알려 드려요.</p>
+          <p class="ex">“5살 아이와 유모차 없이 다녀올 수 있는 오름이 있나요?”</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ③ 사용법 -->
+    <section class="guide">
+      <h2>사용법</h2>
+      <ol class="list">
+        <li class="card step">
+          <span class="num" aria-hidden="true">1</span>
+          <div>
+            <h3>묻기</h3>
+            <p>아이 나이, 지금 있는 곳, 원하는 조건을 편하게 말씀해 주세요.</p>
+          </div>
+        </li>
+        <li class="card step">
+          <span class="num" aria-hidden="true">2</span>
+          <div>
+            <h3>찾아보고 판단</h3>
+            <p>오름 정보와 날씨, 이동 시간을 찾아보고 조건에 맞는지 따져 봐요.</p>
+          </div>
+        </li>
+        <li class="card step">
+          <span class="num" aria-hidden="true">3</span>
+          <div>
+            <h3>추천 받기</h3>
+            <p>결론을 먼저, 이유는 짧게 알려 드려요. 출입통제 여부는 공식 공지 확인을 안내해요.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ④ 마무리 -->
+    <div class="closing">
+      <a class="btn btn-main" href="agent.html">지금 물어보기</a>
+      <p class="note">아직 연습 중인 에이전트예요</p>
+    </div>
+
+  </main>
+</body>
+</html>

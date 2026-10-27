@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>제주&amp;하타라시 · 오름 에이전트</title>
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+  <style>
+    /* 이름·색·글꼴·로고는 brand.md 기준 */
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+    :root {
+      --main: #0B6E8A;
+      --point: #F2994A;
+      --bg: #F3FAFC;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      color: #000;
+      background: var(--bg);
+      line-height: 1.6;
+      word-break: keep-all;
+      min-height: 100vh;
+    }
+
+    /* 휴대폰 화면: 데스크톱에서는 가운데 폰 모양, 폰에서는 꽉 차게 */
+    .phone {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0 auto;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    @media (min-width: 480px) {
+      body { display: grid; place-items: center; padding: 1.5rem 0; }
+      .phone {
+        height: min(820px, calc(100dvh - 3rem));
+        border: 2px solid var(--main);
+        border-radius: 2rem;
+        box-shadow: 0 6px 0 rgba(11, 110, 138, 0.3), 0 16px 40px rgba(11, 110, 138, 0.18);
+      }
+    }
+
+    /* 헤더 */
+    .header {
+      flex: none;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: var(--white);
+      border-bottom: 2px solid var(--main);
+    }
+
+    .header .logo-link {
+      display: block;
+      flex: none;
+      border-radius: 50%;
+    }
+
+    .header .logo {
+      display: block;
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      line-height: 1.3;
+      color: var(--main);
+    }
+
+    .logo-link:focus-visible {
+      outline: 3px solid var(--main);
+      outline-offset: 2px;
+    }
+
+    /* 이 에이전트는요: 헤더 아래 접었다 펼 수 있는 칸 */
+    .about {
+      flex: none;
+      background: var(--bg);
+      border-bottom: 2px solid var(--main);
+    }
+
+    .about summary {
+      padding: 0.7rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* 펼쳐도 대화 영역이 남도록 높이를 화면의 일부로 제한 */
+    .about-body {
+      max-height: 22vh;
+      max-height: 22dvh;
+      overflow-y: auto;
+      padding: 0 1.25rem 0.9rem;
+      font-size: 1rem;
+    }
+
+    .about-body ol {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .about-body li { margin-bottom: 0.5rem; }
+
+    .about-body .source {
+      display: block;
+      font-size: 1rem;
+      color: #000;
+    }
+
+    .about-body .jeju-word {
+      margin: 0.6rem 0 0;
+      padding-top: 0.6rem;
+      border-top: 2px dashed var(--point);
+      font-weight: 700;
+    }
+
+    /* 대화 영역: 말풍선이 쌓이는 곳 */
+    .chat {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.25rem 1rem;
+      overflow-y: auto;
+    }
+
+    /* 말풍선 */
+    .bubble {
+      max-width: 82%;
+      margin: 0;
+      padding: 0.7rem 1rem;
+      font-weight: 600;
+      border-radius: 1.4rem;
+    }
+
+    .bubble.agent {
+      align-self: flex-start;
+      background: var(--white);
+      border: 2px solid var(--main);
+      border-bottom-left-radius: 0.4rem;
+      box-shadow: 0 4px 0 rgba(11, 110, 138, 0.3);
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--point);
+      border: 2px solid var(--point);
+      border-bottom-right-radius: 0.4rem;
+      box-shadow: 0 4px 0 rgba(11, 110, 138, 0.3);
+    }
+
+    /* 생각 과정 보기: 에이전트 답 말풍선 아래 접었다 펼 수 있는 칸 */
+    .thinking {
+      --find: var(--main);
+      --judge: var(--point);
+      --act: #000;
+      align-self: flex-start;
+      width: 82%;
+      margin-top: -0.25rem;
+    }
+
+    .thinking summary {
+      display: inline-block;
+      padding: 0.25rem 0.8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #000;
+      background: var(--white);
+      border: 2px dashed var(--main);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .thinking[open] summary { margin-bottom: 0.5rem; }
+
+    .thinking-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .step {
+      margin: 0;
+      padding: 0.5rem 0.8rem;
+      border-left: 6px solid var(--c);
+      border-radius: 0.8rem;
+      background: var(--white);
+      font-size: 1rem;
+    }
+
+    .step b {
+      display: block;
+      color: #000;
+      font-weight: 800;
+    }
+
+    .step.find  { --c: var(--find); }
+    .step.judge { --c: var(--judge); }
+    .step.act   { --c: var(--act); }
+
+    /* 생각 중… 점 세 개 */
+    .bubble.typing {
+      display: flex;
+      gap: 0.3rem;
+      padding: 0.95rem 1.1rem;
+    }
+
+    .bubble.typing span {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: var(--main);
+      animation: blink 1s ease-in-out infinite;
+    }
+
+    .bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+    .bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes blink {
+      0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(-0.25rem); }
+    }
+
+    /* 추천 질문 버튼 ×3 */
+    .suggest {
+      flex: none;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-auto-rows: max-content;
+      align-content: start;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem 0.75rem;
+      /* 버튼이 많아져도 대화 영역을 밀어내지 않게 칸 안에서 스크롤 */
+      max-height: 24vh;
+      max-height: 24dvh;
+      overflow-y: auto;
+    }
+
+    .suggest button {
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.35;
+      min-height: 2.75rem;
+      text-align: left;
+      color: #000;
+      background: var(--white);
+      border: 2px solid var(--main);
+      border-radius: 1rem;
+      padding: 0.55rem 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .suggest button:hover {
+      background: var(--main);
+      border-color: var(--main);
+      color: var(--white);
+    }
+
+    /* 입력창 + 보내기 */
+    .input-bar {
+      flex: none;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem 1rem;
+      background: var(--white);
+      border-top: 2px solid var(--main);
+    }
+
+    .input-bar input {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      color: #000;
+      background: var(--bg);
+      border: 2px solid var(--main);
+      border-radius: 999px;
+      padding: 0.6rem 1rem;
+    }
+
+    .input-bar input::placeholder { color: var(--main); }
+
+    .input-bar button {
+      flex: none;
+      font: inherit;
+      font-weight: 800;
+      color: var(--white);
+      background: var(--main);
+      border: 0;
+      border-radius: 999px;
+      padding: 0.6rem 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .input-bar button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
+
+    /* 가짜 답이라는 안내: 화면 맨 아래에 작게 */
+    .fake-note {
+      flex: none;
+      margin: 0;
+      padding: 0 1rem calc(0.75rem + env(safe-area-inset-bottom));
+      font-size: 1rem;
+      text-align: center;
+      color: #000;
+      background: var(--white);
+    }
+
+    .about summary:focus-visible,
+    .thinking summary:focus-visible,
+    .suggest button:focus-visible,
+    .input-bar input:focus-visible,
+    .input-bar button:focus-visible {
+      outline: 3px solid var(--main);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .suggest button { transition: none; }
+      .bubble.typing span { animation: none; opacity: 0.7; }
+      .input-bar button:active { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header class="header">
+      <a class="logo-link" href="index.html"><img class="logo" src="images/logo.svg" alt="제주&amp;하타라시 홈으로"></a>
+      <h1>제주&amp;하타라시</h1>
+    </header>
+
+    <details class="about">
+      <summary>이 에이전트는요</summary>
+      <div class="about-body">
+        <ol>
+          <li>제주에는 368개의 오름이 있는 것으로 알려져 있습니다. 다만 정확한 개수는 집계 기준에 따라 다를 수 있습니다.
+            <small class="source">(출처: 제주특별자치도 오름 보전관리 용역 최종보고회 보도, 뉴스서울, 2024.12.16.)</small></li>
+          <li>오름은 대체로 목장지 등으로 이용되어 왔고, 많은 오름에 제주 사람들의 무덤이 있습니다.
+            <small class="source">(출처: 세계일보, 2015.11.19.)</small></li>
+          <li>무덤을 둘러싼 돌담인 산담은 목축이 중심이던 제주의 산업 환경에서 무덤을 보호하려는 데서 비롯되었다고 설명됩니다.
+            <small class="source">(출처: jnuri.net 기사, 2023.11.27.)</small></li>
+        </ol>
+        <p class="jeju-word">혼저 옵서예 — 어서 오세요</p>
+      </div>
+    </details>
+
+    <main class="chat" aria-label="대화">
+      <p class="bubble agent">안녕하세요! 아이와 부모님과 함께 가기 좋은 제주 오름을 찾아 드려요 🍊</p>
+    </main>
+
+    <nav class="suggest" aria-label="추천 질문">
+      <button type="button">경사가 완만하고 주차가 쉬우며 왕복 1시간 내외인 오름은 어디인가요?</button>
+      <button type="button">오늘 비가 온 뒤라 길이 미끄러울 수 있는데, 지금 숙소에서 30분 안에 갈 수 있고 화장실이 있는 오름은 어디인가요?</button>
+      <button type="button">5살 아이와 유모차 없이 다녀올 수 있는 오름이 있나요?</button>
+    </nav>
+
+    <form class="input-bar">
+      <input type="text" placeholder="궁금한 오름을 물어보세요" aria-label="질문 입력창" autocomplete="off">
+      <button type="submit">보내기</button>
+    </form>
+
+    <p class="fake-note">※ 지금 답변은 연습용 가짜 답이에요.</p>
+  </div>
+
+  <script>
+    // 가짜 답 3개를 차례로 돌려 씀 (진짜 에이전트는 5일차에 연결)
+    const REPLIES = [
+      "안녕하세요! 가족과 함께 갈 제주 오름을 찾아 드려요 🍊 아이 나이와 걸을 수 있는 시간, 주차가 편한 곳이 좋은지 알려 주실래요?",
+      "그렇다면 경사가 완만하고 주차가 쉬운 낮은 오름부터 둘러보시는 걸 추천해요. 왕복 1시간 안팎이면 아이와 부모님 모두 무리 없이 다녀올 수 있어요.",
+      "아직 공부 중이에요! 5일차에 진짜로 알아볼게요."
+    ];
+    const REPLY_DELAY_MS = 1000;
+
+    const chat = document.querySelector(".chat");
+    const form = document.querySelector(".input-bar");
+    const input = form.querySelector("input");
+    let replyIndex = 0;
+
+    // 새 말풍선이 생길 때마다 맨 아래로 스크롤
+    function addBubble(text, who) {
+      const p = document.createElement("p");
+      p.className = "bubble " + who;
+      p.textContent = text;
+      chat.appendChild(p);
+      chat.scrollTop = chat.scrollHeight;
+      return p;
+    }
+
+    // 답 말풍선 아래 '생각 과정 보기' 칸 (내용은 5일차에 채움)
+    const THINKING_STEPS = [
+      { cls: "find", name: "찾기" },
+      { cls: "judge", name: "판단" },
+      { cls: "act", name: "실행" }
+    ];
+
+    function addThinking() {
+      const d = document.createElement("details");
+      d.className = "thinking";
+      const steps = THINKING_STEPS.map((s) =>
+        '<p class="step ' + s.cls + '"><b>' + s.name + '</b>(5일차에 채워져요)</p>'
+      ).join("");
+      d.innerHTML = "<summary>생각 과정 보기</summary><div class=\"thinking-steps\">" + steps + "</div>";
+      chat.appendChild(d);
+      chat.scrollTop = chat.scrollHeight;
+      return d;
+    }
+
+    // 답이 오기 전 보여 주는 '생각 중…' 점 세 개
+    function addTyping() {
+      const p = document.createElement("p");
+      p.className = "bubble agent typing";
+      p.setAttribute("role", "status");
+      p.setAttribute("aria-label", "생각 중…");
+      p.innerHTML = "<span></span><span></span><span></span>";
+      chat.appendChild(p);
+      chat.scrollTop = chat.scrollHeight;
+      return p;
+    }
+
+    function send(text) {
+      text = text.trim();
+      if (!text) return; // 빈칸·공백만 있으면 보내지 않음
+      addBubble(text, "user");
+      const reply = REPLIES[replyIndex % REPLIES.length];
+      replyIndex++;
+      const typing = addTyping();
+      setTimeout(() => {
+        typing.remove();
+        addBubble(reply, "agent");
+        addThinking();
+      }, REPLY_DELAY_MS);
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault(); // 보내기 버튼과 Enter 모두 여기로 들어옴
+      send(input.value);
+      input.value = "";
+      input.focus();
+    });
+
+    // 추천 질문 버튼도 눌러서 바로 보낼 수 있게
+    document.querySelectorAll(".suggest button").forEach((btn) => {
+      btn.addEventListener("click", () => send(btn.textContent));
+    });
+
+    chat.scrollTop = chat.scrollHeight;
+  </script>
+</body>
+</html>

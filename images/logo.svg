@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="t">
+  <title id="t">제주&amp;하타라시 로고</title>
+  <!-- 색 토큰: main #0B6E8A / point #F2994A (brand.md 기준) -->
+  <defs>
+    <clipPath id="c"><circle cx="64" cy="70" r="50"/></clipPath>
+  </defs>
+  <circle cx="64" cy="70" r="50" fill="#F2994A"/>
+  <path d="M0 116C18 78 40 64 64 64s46 14 64 52z" fill="#0B6E8A" clip-path="url(#c)"/>
+  <path d="M64 20c2-8 10-14 20-14-1 9-9 15-20 14z" fill="#0B6E8A"/>
+</svg>

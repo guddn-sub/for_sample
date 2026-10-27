@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>나의 제주 여행 취향 카드</title>
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+  <style>
+    /* 이름·색·글꼴·로고는 brand.md 기준 */
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+    :root {
+      --main: #0B6E8A;
+      --point: #F2994A;
+      --bg: #F3FAFC;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      color: #000;
+      background: var(--bg);
+      line-height: 1.7;
+      word-break: keep-all;
+      min-height: 100vh;
+    }
+
+    h2, .today h3 { color: var(--main); }
+
+    .wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 1.25rem 3rem;
+    }
+
+    /* 맨 위 로고: 누르면 첫 화면으로 */
+    .logo-link {
+      display: block;
+      width: 3rem;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+    }
+
+    .logo-link:focus-visible {
+      outline: 3px solid var(--main);
+      outline-offset: 3px;
+    }
+
+    .logo {
+      display: block;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    /* 맨 위: 별명 + 한 줄 소개 */
+    .hero {
+      text-align: center;
+      padding: 2.5rem 0 2rem;
+    }
+
+    .hero .tag {
+      display: inline-block;
+      background: var(--white);
+      color: var(--main);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      border: 2px dashed var(--main);
+    }
+
+    .hero .emoji {
+      font-size: 3.5rem;
+      line-height: 1;
+      margin: 1.25rem 0 0.5rem;
+      animation: bob 3s ease-in-out infinite;
+    }
+
+    .nick {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+    }
+
+    .avatar {
+      flex: none;
+      width: 5.5rem;
+      height: 5.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid var(--point);
+      box-shadow: 0 8px 18px rgba(242, 153, 74, 0.35);
+      background: var(--bg);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 24px rgba(242, 153, 74, 0.45);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .avatar { transition: none; }
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.8rem, 15vw, 4rem);
+      line-height: 1.2;
+      color: #000;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(transparent 62%, var(--point) 62%);
+      padding: 0 0.15em;
+    }
+
+    .hero p {
+      margin: 1rem auto 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      max-width: 20em;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero .emoji { animation: none; }
+    }
+
+    /* 취향 카드 */
+    .cards {
+      display: grid;
+      gap: 1rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--white);
+      border-radius: 1.5rem;
+      padding: 1.1rem 1.25rem;
+      box-shadow: 0 6px 0 rgba(242, 153, 74, 0.25), 0 10px 24px rgba(11, 110, 138, 0.12);
+      border: 1.5px solid var(--main);
+      border-top: 4px solid var(--point);
+    }
+
+    .icon {
+      flex: none;
+      width: 3.75rem;
+      height: 3.75rem;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+
+    .label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--main);
+    }
+
+    .value {
+      display: block;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    /* 오늘 어디 갈까? */
+    .today {
+      margin-top: 1.5rem;
+      background: var(--white);
+      border: 2px solid var(--main);
+      border-radius: 1.5rem;
+      padding: 1.1rem 1.25rem 1.25rem;
+      box-shadow: 0 6px 0 rgba(11, 110, 138, 0.3), 0 10px 24px rgba(11, 110, 138, 0.12);
+    }
+
+    .today h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .weather {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .weather button {
+      font: inherit;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #000;
+      background: var(--bg);
+      border: 2px solid var(--main);
+      border-radius: 999px;
+      padding: 0.6rem 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .weather button[aria-pressed="true"] {
+      background: var(--main);
+      border-color: var(--main);
+      color: var(--white);
+    }
+
+    .weather button:focus-visible {
+      outline: 3px solid var(--point);
+      outline-offset: 2px;
+    }
+
+    .pick {
+      margin: 1rem 0 0;
+      padding: 0.9rem 1rem;
+      background: var(--bg);
+      border-radius: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .pick.none { background: var(--white); border: 1px dashed var(--main); }
+
+    /* 가 보고 싶은 장소 */
+    .section-title {
+      margin: 2.5rem 0 1rem;
+      font-size: 1.6rem;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .place .value { font-size: 1.2rem; }
+
+    .reason {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    /* 나는 어떤 제주 여행자? 퀴즈 */
+    .quiz {
+      margin-top: 2.5rem;
+      background: var(--white);
+      border: 2px solid var(--main);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      box-shadow: 0 6px 0 rgba(242, 153, 74, 0.25), 0 10px 24px rgba(11, 110, 138, 0.12);
+    }
+
+    .quiz h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.4rem;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .quiz-step {
+      margin: 0;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--main);
+    }
+
+    .quiz-q {
+      margin: 0.75rem 0 1rem;
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .quiz-q:focus { outline: none; }
+
+    .options {
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .options button, .retry {
+      font: inherit;
+      font-weight: 700;
+      color: #000;
+      background: var(--bg);
+      border: 2px solid var(--main);
+      border-radius: 1rem;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .options button:hover, .retry:hover {
+      background: var(--main);
+      border-color: var(--main);
+      color: var(--white);
+    }
+
+    .options button:focus-visible, .retry:focus-visible {
+      outline: 3px solid var(--point);
+      outline-offset: 2px;
+    }
+
+    .result { text-align: center; }
+
+    .result:focus { outline: none; }
+
+    .result .big { font-size: 3rem; line-height: 1.2; }
+
+    .result .type-name {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .result .type-name span {
+      background: linear-gradient(transparent 62%, var(--point) 62%);
+      padding: 0 0.15em;
+    }
+
+    .result .type-desc { margin: 0.25rem 0 1rem; font-weight: 600; }
+
+    .result .cards { text-align: left; }
+
+    .retry { margin-top: 1rem; text-align: center; }
+
+    .quiz-rules {
+      margin: 1.25rem 0 0;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--point);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #000;
+    }
+
+    .quiz-rules p { margin: 0 0 0.25rem; }
+
+    .quiz-rules ul { margin: 0; padding-left: 1.1rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .options button, .retry { transition: none; }
+    }
+
+    /* 제주 귤뽑기 */
+    .gacha {
+      margin-top: 2rem;
+      background: var(--white);
+      border: 2px solid var(--main);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: 0 6px 0 rgba(11, 110, 138, 0.3), 0 10px 24px rgba(11, 110, 138, 0.12);
+    }
+
+    .gacha h2 { margin: 0 0 0.25rem; font-size: 1.4rem; line-height: 1.3; }
+
+    .gacha-sub { margin: 0 0 1rem; font-weight: 600; }
+
+    .draw {
+      font: inherit;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #000;
+      background: var(--point);
+      border: 0;
+      border-radius: 999px;
+      padding: 0.7rem 1.6rem;
+      cursor: pointer;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .draw:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
+    .draw:disabled { opacity: 0.7; cursor: default; }
+    .draw:focus-visible { outline: 3px solid var(--main); outline-offset: 3px; }
+
+    .gacha-result {
+      margin: 1rem 0 0;
+      padding: 1rem;
+      min-height: 9rem;
+      background: var(--bg);
+      border-radius: 1rem;
+    }
+
+    .gacha-result .big { font-size: 3.5rem; line-height: 1.2; }
+    .gacha-result.shake .big { animation: shake 0.6s ease-in-out; }
+
+    .gacha-result .rarity {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--white);
+      background: var(--main);
+      border-radius: 999px;
+      padding: 0.05rem 0.7rem;
+    }
+
+    .gacha-result .rarity.r-rare { background: var(--point); color: #000; }
+    .gacha-result .rarity.r-legend { background: #000; }
+
+    .gacha-result .g-name { margin: 0.25rem 0 0; font-size: 1.4rem; font-weight: 800; }
+    .gacha-result .g-desc { margin: 0; font-weight: 600; }
+
+    .collection {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 1rem 0 0;
+      padding: 0;
+      font-size: 1.6rem;
+    }
+
+    .collection li { filter: grayscale(1); opacity: 0.3; }
+    .collection li.got { filter: none; opacity: 1; }
+
+    .gacha-count { margin: 0.25rem 0 0; font-size: 0.9rem; font-weight: 700; color: var(--main); }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0); }
+      20% { transform: rotate(-15deg); }
+      40% { transform: rotate(15deg); }
+      60% { transform: rotate(-10deg); }
+      80% { transform: rotate(10deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .gacha-result.shake .big { animation: none; }
+      .draw:active { transform: none; }
+    }
+
+    /* 귤 따기 */
+    .picking {
+      margin-top: 2rem;
+      background: var(--white);
+      border: 2px solid var(--main);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: 0 6px 0 rgba(242, 153, 74, 0.25), 0 10px 24px rgba(11, 110, 138, 0.12);
+    }
+
+    .picking h2 { margin: 0 0 0.25rem; font-size: 1.4rem; line-height: 1.3; }
+
+    .tree { position: relative; width: 15rem; max-width: 100%; margin: 0.5rem auto 0; }
+
+    .canopy {
+      position: relative;
+      height: 11rem;
+      background: #7cc576;
+      border-radius: 50% 50% 45% 45%;
+      box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .trunk { width: 2rem; height: 3rem; margin: 0 auto; background: #9a6b3f; border-radius: 0 0 0.5rem 0.5rem; }
+
+    .fruit {
+      position: absolute;
+      width: 2.75rem;
+      height: 2.75rem;
+      padding: 0;
+      font-size: 1.9rem;
+      line-height: 1;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease;
+    }
+
+    .fruit:hover { transform: translate(-50%, -50%) scale(1.15); }
+    .fruit:focus-visible { outline: 3px solid var(--main); border-radius: 50%; }
+    .fruit.picked { visibility: hidden; }
+
+    .basket { margin: 0.75rem 0 0; font-size: 1.1rem; font-weight: 800; }
+
+    .picking .retry { margin-top: 0.5rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fruit { transition: none; }
+    }
+
+    /* 8일 뒤 에이전트에게 시킬 일 */
+    .todo {
+      margin-top: 2rem;
+      background: var(--white);
+      border: 2px dashed var(--point);
+      border-radius: 1.5rem;
+      padding: 1.1rem 1.25rem;
+    }
+
+    .todo h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+      color: var(--main);
+    }
+
+    .todo p {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.95rem;
+      color: var(--main);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <a class="logo-link" href="index.html"><img class="logo" src="images/logo.svg" alt="제주&amp;하타라시 홈으로"></a>
+      <span class="tag">나의 제주 여행 취향 카드</span>
+      <div class="emoji" aria-hidden="true">🌊</div>
+      <div class="nick">
+        <img class="avatar" src="images/character.svg" alt="하타라시의 여행 캐릭터 프로필 사진">
+        <h1><span>하타라시</span></h1>
+      </div>
+      <p>바다 보며 방전된 배터리를 충전하러 제주에 가는 사람</p>
+    </header>
+
+    <main>
+      <ul class="cards">
+        <li class="card">
+          <div class="icon" aria-hidden="true">🏖️</div>
+          <div>
+            <span class="label">여행 스타일</span>
+            <span class="value">바다 · 카페</span>
+          </div>
+        </li>
+        <li class="card">
+          <div class="icon" aria-hidden="true">🐢</div>
+          <div>
+            <span class="label">여행 속도</span>
+            <span class="value">느긋하게</span>
+          </div>
+        </li>
+        <li class="card">
+          <div class="icon" aria-hidden="true">🍜</div>
+          <div>
+            <span class="label">좋아하는 음식</span>
+            <span class="value">고기국수, 감귤 디저트</span>
+          </div>
+        </li>
+      </ul>
+
+      <section class="today" aria-labelledby="today-title">
+        <h3 id="today-title">🧭 오늘 어디 갈까?</h3>
+        <div class="weather" role="group" aria-label="오늘 날씨">
+          <button type="button" data-weather="맑음" aria-pressed="false">☀️ 맑음</button>
+          <button type="button" data-weather="비" aria-pressed="false">🌧️ 비</button>
+        </div>
+        <p class="pick" id="pick" aria-live="polite">날씨를 골라 주세요.</p>
+      </section>
+
+      <section aria-labelledby="places-title">
+        <h2 class="section-title" id="places-title">가 보고 싶은 제주 장소</h2>
+        <ul class="cards">
+          <li class="card place">
+            <div class="icon" aria-hidden="true">🌅</div>
+            <div>
+              <span class="value">협재 해변</span>
+              <span class="reason">에메랄드빛 바다를 멍하니 보고 싶어서</span>
+            </div>
+          </li>
+          <li class="card place">
+            <div class="icon" aria-hidden="true">☕</div>
+            <div>
+              <span class="value">애월 바닷가 카페</span>
+              <span class="reason">파도 소리 들으며 한나절 쉬고 싶어서</span>
+            </div>
+          </li>
+          <li class="card place">
+            <div class="icon" aria-hidden="true">🍊</div>
+            <div>
+              <span class="value">서귀포 감귤밭</span>
+              <span class="reason">갓 딴 귤과 감귤 디저트를 맛보고 싶어서</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="quiz" aria-labelledby="quiz-title">
+        <h2 id="quiz-title">🧳 나는 어떤 제주 여행자?</h2>
+        <div id="quiz-body" aria-live="polite"></div>
+        <div class="quiz-rules" id="quiz-rules"></div>
+      </section>
+
+      <section class="gacha" aria-labelledby="gacha-title">
+        <h2 id="gacha-title">🍊 제주 귤뽑기</h2>
+        <p class="gacha-sub">오늘은 어떤 귤이 나올까요?</p>
+        <button class="draw" id="draw" type="button">귤 뽑기!</button>
+        <div class="gacha-result" id="gacha-result" aria-live="polite">버튼을 눌러 귤을 뽑아 보세요.</div>
+        <p class="gacha-count" id="gacha-count"></p>
+        <ul class="collection" id="collection" aria-label="모은 귤"></ul>
+        <div class="quiz-rules" id="gacha-rules"></div>
+      </section>
+
+      <section class="picking" aria-labelledby="picking-title">
+        <h2 id="picking-title">🌳 귤 따기</h2>
+        <p class="gacha-sub">나무에 달린 귤을 눌러서 따 보세요!</p>
+        <div class="tree">
+          <div class="canopy" id="canopy"></div>
+          <div class="trunk" aria-hidden="true"></div>
+        </div>
+        <p class="basket" id="basket" aria-live="polite"></p>
+        <button class="retry" id="regrow" type="button" hidden>🌱 다시 열매 맺기</button>
+        <div class="quiz-rules" id="picking-rules"></div>
+      </section>
+
+      <section class="todo" aria-labelledby="todo-title">
+        <h3 id="todo-title">🤖 8일 뒤 내 에이전트에게 시키고 싶은 일</h3>
+        <p>11월 3일에 제주 항공권과 숙소 가격을 다시 확인해서 가장 저렴한 조합을 알려줘.</p>
+      </section>
+    </main>
+
+    <footer>🍊 오늘도 충전 중 🔋</footer>
+  </div>
+
+  <script>
+    // my_profile.json 내용 (file://로 열어도 동작하도록 여기에 그대로 옮겨 둠)
+    // 종류: 규칙에 쓰는 태그. 바닷가 / 오름 / 실내(박물관·시장·카페)
+    const myStyle = ["바다", "카페"];
+    const myPlaces = [
+      { name: "협재 해변", reason: "에메랄드빛 바다를 멍하니 보고 싶어서", kinds: ["바닷가"] },
+      { name: "애월 바닷가 카페", reason: "파도 소리 들으며 한나절 쉬고 싶어서", kinds: ["바닷가", "실내"] },
+      { name: "서귀포 감귤밭", reason: "갓 딴 귤과 감귤 디저트를 맛보고 싶어서", kinds: [] }
+    ];
+
+    // 규칙: 맑음+바다 → 바닷가 / 맑음+오름 → 오름 / 비 → 실내
+    function wantedKinds(weather) {
+      if (weather === "비") return [{ kind: "실내", why: "비 오는 날엔 실내가 좋으니까" }];
+      const rules = [];
+      if (myStyle.includes("바다")) rules.push({ kind: "바닷가", why: "맑은 날 바다를 좋아하니까" });
+      if (myStyle.includes("오름")) rules.push({ kind: "오름", why: "맑은 날 오름을 좋아하니까" });
+      return rules;
+    }
+
+    function recommend(weather) {
+      for (const { kind, why } of wantedKinds(weather)) {
+        const place = myPlaces.find((p) => p.kinds.includes(kind));
+        if (place) return `${place.name} — ${why}, ${place.reason}`;
+      }
+      return null;
+    }
+
+    const pickEl = document.getElementById("pick");
+    const buttons = document.querySelectorAll(".weather button");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        const result = recommend(btn.dataset.weather);
+        pickEl.classList.toggle("none", !result);
+        pickEl.textContent = result ?? "규칙에 맞는 장소가 없어요";
+      });
+    });
+
+    // ---- 나는 어떤 제주 여행자? 퀴즈 ----
+    const travelerTypes = {
+      sea: {
+        emoji: "🌊", name: "바다 탐험가", desc: "물빛만 봐도 충전되는 바다 체질!",
+        places: [
+          { icon: "🏖️", name: "협재 해변", reason: "에메랄드빛 바다를 멍하니 보기 딱 좋아서" },
+          { icon: "🚢", name: "우도", reason: "배 타고 들어가 섬 한 바퀴 도는 재미가 있어서" }
+        ]
+      },
+      oreum: {
+        emoji: "⛰️", name: "오름 등반가", desc: "정상 뷰를 봐야 직성이 풀리는 산책파!",
+        places: [
+          { icon: "🌾", name: "새별오름", reason: "억새밭과 노을이 한눈에 들어오는 대표 오름이라서" },
+          { icon: "🌄", name: "다랑쉬오름", reason: "'오름의 여왕'답게 분화구 풍경이 근사해서" }
+        ]
+      },
+      food: {
+        emoji: "🍜", name: "맛집 사냥꾼", desc: "여행의 8할은 먹는 일이라고 믿는 미식가!",
+        places: [
+          { icon: "🏮", name: "동문시장", reason: "흑돼지 꼬치부터 감귤 디저트까지 골라 먹을 수 있어서" },
+          { icon: "🍊", name: "서귀포 매일올레시장", reason: "귤 간식과 향토 음식이 한 골목에 모여 있어서" }
+        ]
+      }
+    };
+
+    // 질문마다 보기 3개. type이 곧 점수를 얻는 유형 (보기 순서는 일부러 섞음)
+    const quizQuestions = [
+      { q: "제주공항에 막 도착했어요. 제일 먼저 하고 싶은 일은?", options: [
+        { text: "🌊 일단 바다부터 보러 간다", short: "바다부터", type: "sea" },
+        { text: "🥢 배고프다! 맛집부터 간다", short: "맛집부터", type: "food" },
+        { text: "⛰️ 오름이 보이는 쪽으로 달려간다", short: "오름 쪽으로", type: "oreum" }
+      ] },
+      { q: "비가 갠 오후, 반나절이 통째로 비었어요.", options: [
+        { text: "🍜 줄 서는 가게를 찾아간다", short: "줄 서는 가게", type: "food" },
+        { text: "🌿 숲길과 오름을 천천히 걷는다", short: "숲길·오름 산책", type: "oreum" },
+        { text: "🏖️ 해변에 앉아 멍 때린다", short: "해변 멍 때리기", type: "sea" }
+      ] },
+      { q: "여행이 끝나고 보니 사진첩에 제일 많은 사진은?", options: [
+        { text: "🌄 정상에서 찍은 풍경 사진", short: "정상 풍경", type: "oreum" },
+        { text: "🌅 수평선과 파도 사진", short: "수평선·파도", type: "sea" },
+        { text: "🍊 먹은 음식 사진", short: "음식 사진", type: "food" }
+      ] }
+    ];
+
+    const quizBody = document.getElementById("quiz-body");
+    const quizAnswers = [];
+
+    // 가장 많이 고른 유형. 1-1-1로 갈리면 첫 번째 답의 유형.
+    function decideType(answers) {
+      const count = {};
+      answers.forEach((t) => { count[t] = (count[t] || 0) + 1; });
+      const max = Math.max(...Object.values(count));
+      const top = Object.keys(count).filter((t) => count[t] === max);
+      return top.length === 1 ? top[0] : answers[0];
+    }
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function showQuestion() {
+      const step = quizAnswers.length;
+      const { q, options } = quizQuestions[step];
+      quizBody.replaceChildren();
+
+      quizBody.append(el("p", "quiz-step", `질문 ${step + 1} / ${quizQuestions.length}`));
+      const heading = el("p", "quiz-q", q);
+      heading.tabIndex = -1;
+      quizBody.append(heading);
+
+      const list = el("div", "options");
+      options.forEach((opt) => {
+        const btn = el("button", "", opt.text);
+        btn.type = "button";
+        btn.addEventListener("click", () => {
+          quizAnswers.push(opt.type);
+          quizAnswers.length < quizQuestions.length ? showQuestion() : showResult();
+        });
+        list.append(btn);
+      });
+      quizBody.append(list);
+      if (step > 0) heading.focus();
+    }
+
+    function showResult() {
+      const type = travelerTypes[decideType(quizAnswers)];
+      quizBody.replaceChildren();
+
+      const box = el("div", "result");
+      box.tabIndex = -1;
+      box.append(el("div", "big", type.emoji));
+      const name = el("p", "type-name");
+      name.append(el("span", "", type.name));
+      box.append(name, el("p", "type-desc", type.desc));
+
+      const list = el("ul", "cards");
+      type.places.forEach((p) => {
+        const li = el("li", "card place");
+        const icon = el("div", "icon", p.icon);
+        icon.setAttribute("aria-hidden", "true");
+        const info = el("div");
+        info.append(el("span", "value", p.name), el("span", "reason", p.reason));
+        li.append(icon, info);
+        list.append(li);
+      });
+      box.append(list);
+
+      const retry = el("button", "retry", "🔄 다시 해보기");
+      retry.type = "button";
+      retry.addEventListener("click", () => {
+        quizAnswers.length = 0;
+        showQuestion();
+      });
+      box.append(retry);
+
+      quizBody.append(box);
+      box.focus();
+    }
+
+    // 화면 아래 규칙은 위 데이터에서 만들어서 질문·보기와 항상 일치하게 함
+    function renderQuizRules() {
+      const rules = document.getElementById("quiz-rules");
+      rules.append(el("p", "", "결과 규칙: 보기마다 한 유형에 1점, 가장 많이 고른 유형이 내 유형이에요. 세 유형이 1점씩이면 첫 번째 답의 유형으로 정해요."));
+      const ul = el("ul");
+      quizQuestions.forEach((item, i) => {
+        const line = item.options
+          .map((o) => `${o.short} → ${travelerTypes[o.type].name}`)
+          .join(" / ");
+        ul.append(el("li", "", `질문 ${i + 1}: ${line}`));
+      });
+      rules.append(ul);
+    }
+
+    renderQuizRules();
+    showQuestion();
+
+    // ---- 제주 귤뽑기 ----
+    // 등급 확률(%)은 합이 100. 같은 등급 안에서는 똑같은 확률로 나옴.
+    const rarities = {
+      common: { label: "일반", chance: 60, cls: "" },
+      rare: { label: "희귀", chance: 30, cls: "r-rare" },
+      legend: { label: "전설", chance: 10, cls: "r-legend" }
+    };
+    const citrus = [
+      { emoji: "🍊", name: "노지 감귤", desc: "제주 하면 떠오르는 새콤달콤한 기본 귤!", rarity: "common" },
+      { emoji: "🍏", name: "청귤", desc: "초록빛 그대로 새콤하게 즐기는 귤!", rarity: "common" },
+      { emoji: "🍋", name: "하귤", desc: "크고 상큼한, 여름에 만나는 귤!", rarity: "common" },
+      { emoji: "🧡", name: "한라봉", desc: "꼭지가 볼록 솟은 달콤한 귤!", rarity: "rare" },
+      { emoji: "❤️", name: "레드향", desc: "빨갛게 익은 껍질에 진한 단맛!", rarity: "rare" },
+      { emoji: "🌸", name: "천혜향", desc: "향기가 하늘이 내린 선물 같은 귤!", rarity: "rare" },
+      { emoji: "👑", name: "황금향", desc: "묵직하고 달콤한 귀한 귤! 오늘은 행운의 날 ✨", rarity: "legend" }
+    ];
+
+    const drawBtn = document.getElementById("draw");
+    const gachaResult = document.getElementById("gacha-result");
+    const gachaCount = document.getElementById("gacha-count");
+    const collectionEl = document.getElementById("collection");
+    const owned = new Set();
+    let drawn = 0;
+
+    citrus.forEach((c) => {
+      const li = el("li", "", c.emoji);
+      li.title = c.name;
+      li.setAttribute("aria-label", c.name);
+      collectionEl.append(li);
+    });
+
+    function pickCitrus() {
+      let roll = Math.random() * 100;
+      const key = Object.keys(rarities).find((k) => (roll -= rarities[k].chance) < 0) ?? "common";
+      const pool = citrus.filter((c) => c.rarity === key);
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function showCitrus(c) {
+      const r = rarities[c.rarity];
+      gachaResult.replaceChildren();
+      gachaResult.append(
+        el("div", "big", c.emoji),
+        el("span", `rarity ${r.cls}`, r.label),
+        el("p", "g-name", c.name),
+        el("p", "g-desc", c.desc)
+      );
+      gachaResult.classList.remove("shake");
+      void gachaResult.offsetWidth;
+      gachaResult.classList.add("shake");
+
+      owned.add(c.name);
+      drawn += 1;
+      citrus.forEach((item, i) => collectionEl.children[i].classList.toggle("got", owned.has(item.name)));
+      gachaCount.textContent = `${drawn}번 뽑음 · 모은 귤 ${owned.size} / ${citrus.length}종`;
+    }
+
+    drawBtn.addEventListener("click", () => {
+      drawBtn.disabled = true;
+      gachaResult.replaceChildren(el("div", "big", "🍊"), el("p", "g-desc", "귤 고르는 중…"));
+      gachaResult.classList.remove("shake");
+      void gachaResult.offsetWidth;
+      gachaResult.classList.add("shake");
+      setTimeout(() => {
+        showCitrus(pickCitrus());
+        drawBtn.disabled = false;
+      }, 700);
+    });
+
+    // ---- 귤 따기 ----
+    // 열매 위치는 나뭇잎 영역 안의 %. 개수는 이 배열 길이로 정해짐.
+    const fruitSpots = [
+      [30, 28], [52, 20], [72, 30], [20, 52], [42, 46], [64, 52], [82, 56], [34, 72], [58, 74]
+    ];
+    const canopy = document.getElementById("canopy");
+    const basketEl = document.getElementById("basket");
+    const regrowBtn = document.getElementById("regrow");
+    let basket = 0;
+    let onTree = 0;
+
+    function updateBasket() {
+      basketEl.textContent = onTree === 0
+        ? `🧺 바구니에 귤 ${basket}개 · 다 땄어요! 🎉`
+        : `🧺 바구니에 귤 ${basket}개 · 나무에 ${onTree}개 남음`;
+      regrowBtn.hidden = onTree > 0;
+    }
+
+    function growFruit() {
+      canopy.replaceChildren();
+      fruitSpots.forEach(([x, y], i) => {
+        const fruit = el("button", "fruit", "🍊");
+        fruit.type = "button";
+        fruit.style.left = `${x}%`;
+        fruit.style.top = `${y}%`;
+        fruit.setAttribute("aria-label", `귤 ${i + 1} 따기`);
+        fruit.addEventListener("click", () => {
+          fruit.classList.add("picked");
+          fruit.disabled = true;
+          basket += 1;
+          onTree -= 1;
+          updateBasket();
+          if (onTree === 0) regrowBtn.focus();
+        });
+        canopy.append(fruit);
+      });
+      onTree = fruitSpots.length;
+      updateBasket();
+    }
+
+    regrowBtn.addEventListener("click", () => {
+      growFruit();
+      canopy.querySelector(".fruit").focus();
+    });
+
+    document.getElementById("picking-rules").append(
+      el("p", "", `따기 규칙: 나무에 귤 ${fruitSpots.length}개가 열려요. 누르면 바구니에 담기고, 다 따면 '다시 열매 맺기'로 새로 열려요. 바구니 개수는 계속 쌓여요.`)
+    );
+    growFruit();
+
+    // 화면 아래 확률 안내도 위 데이터에서 만듦
+    (function renderGachaRules() {
+      const rules = document.getElementById("gacha-rules");
+      const line = Object.values(rarities)
+        .map((r) => `${r.label} ${r.chance}% (${citrus.filter((c) => rarities[c.rarity] === r).map((c) => c.name).join(", ")})`)
+        .join(" / ");
+      rules.append(el("p", "", `뽑기 확률: ${line}. 같은 등급 안에서는 똑같은 확률로 나와요.`));
+    })();
+  </script>
+</body>
+</html>
