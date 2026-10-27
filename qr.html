@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>제주&amp;하타라시 · QR 코드</title>
+  <link rel="apple-touch-icon" href="images/icon-180.png">
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+  <style>
+    /* 색·글꼴·로고는 brand.md 기준 */
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+    :root {
+      --main: #0B6E8A;
+      --point: #F2994A;
+      --bg: #F3FAFC;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: #000;
+      font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    .card {
+      width: min(100% - 32px, 520px);
+      margin: 24px 0;
+      padding: 28px 24px 32px;
+      background: #fff;
+      border-top: 6px solid var(--point);
+      border-radius: 4px;
+      box-shadow: 0 2px 12px rgba(11, 110, 138, 0.15);
+      text-align: center;
+    }
+
+    /* QR은 흰 바탕(조용한 여백 포함) 위에 그려요 */
+    #qr {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #fff;
+    }
+    #qr svg { display: block; width: 100%; height: 100%; }
+
+    .fallback {
+      margin: 0;
+      padding: 48px 16px;
+      color: #000;
+    }
+
+    .url {
+      display: inline-block;
+      margin: 20px 0 0;
+      font-size: clamp(16px, 4.6vw, 22px);
+      font-weight: 700;
+      color: var(--main);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+    .url:hover, .url:focus-visible { text-decoration: underline; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(11, 110, 138, 0.2);
+    }
+    .brand img { width: 44px; height: 44px; }
+    .brand span {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--main);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div id="qr" role="img" aria-label="제주&amp;하타라시 배포 주소 QR 코드"></div>
+    <a class="url" id="url" href="https://forsample-omega.vercel.app/">https://forsample-omega.vercel.app/</a>
+    <div class="brand">
+      <img src="images/logo.svg" alt="">
+      <span>제주&amp;하타라시</span>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script>
+    const URL_TEXT = "https://forsample-omega.vercel.app/";
+    const box = document.getElementById("qr");
+
+    try {
+      // 오류 정정 M, 버전은 글자 수에 맞춰 자동으로 정해져요
+      const qr = qrcode(0, "M");
+      qr.addData(URL_TEXT);
+      qr.make();
+
+      const n = qr.getModuleCount();
+      const quiet = 4; // 스캔에 필요한 조용한 여백(모듈 4칸)
+      let d = "";
+      for (let r = 0; r < n; r++) {
+        for (let c = 0; c < n; c++) {
+          if (qr.isDark(r, c)) d += `M${c + quiet} ${r + quiet}h1v1h-1z`;
+        }
+      }
+      const size = n + quiet * 2;
+      box.innerHTML =
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges">` +
+        `<rect width="${size}" height="${size}" fill="#fff"/>` +
+        `<path d="${d}" fill="#000"/></svg>`;
+    } catch (e) {
+      box.removeAttribute("role");
+      box.innerHTML = '<p class="fallback">QR 코드를 그리지 못했어요. 아래 주소를 직접 열어 주세요.</p>';
+    }
+  </script>
+</body>
+</html>
